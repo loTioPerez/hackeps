@@ -1,0 +1,343 @@
+/* =========================================
+   1. FUENTES Y VARIABLES GLOBALES
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+  --bg-dark: #0a0a0a;       /* Fondo casi negro */
+  --bg-card: #121212;       /* Fondo tarjetas */
+  --bg-input: #1a1a1a;      /* Fondo inputs */
+  --text-primary: #e0e0e0;  /* Texto principal */
+  --text-secondary: #a0a0a0;/* Texto secundario */
+  --accent: #d4af37;        /* Dorado sutil (Gold) por defecto */
+  --border: #333333;        /* Bordes sutiles */
+  --border-hover: #555555;
+}
+
+/* =========================================
+   2. RESET Y ESTRUCTURA PRINCIPAL
+   ========================================= */
+html, body, #root {
+  height: 100%; 
+  width: 100%; 
+  margin: 0; 
+  padding: 0;
+  font-family: 'Lato', sans-serif; /* Texto cuerpo */
+  background-color: var(--bg-dark); 
+  color: var(--text-primary); 
+  overflow: hidden; /* Evita scroll en la ventana principal */
+}
+
+* { box-sizing: border-box; }
+
+.app-container {
+  display: flex; 
+  flex-direction: column; 
+  height: 100vh;
+  padding: 30px; 
+  gap: 25px; 
+  max-width: 1800px; 
+  margin: 0 auto;
+  /* Fondo con viñeta sutil */
+  background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+  /* Permitimos que el color de acento se sobrescriba dinámicamente desde React */
+  --accent: var(--theme-color, #d4af37);
+}
+
+/* =========================================
+   3. HEADER (TARJETA FLOTANTE)
+   ========================================= */
+.header-card {
+  background: rgba(18, 18, 18, 0.8); /* Semi-transparente */
+  backdrop-filter: blur(10px);
+  border-radius: 2px; 
+  padding: 25px 35px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.header-top-row {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 15px;
+}
+
+.brand { display: flex; align-items: center; gap: 15px; }
+.logo-icon { font-size: 24px; filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5)); } 
+.brand h1 { 
+  margin: 0; font-family: 'Cinzel', serif; font-size: 1.8rem; letter-spacing: 2px; 
+  color: var(--text-primary); text-transform: uppercase;
+}
+
+.user-pill { 
+  background: transparent; 
+  border: 1px solid var(--border); 
+  padding: 6px 15px; 
+  display: flex; align-items: center; gap: 10px; 
+  font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--text-secondary);
+}
+.user-pill input { 
+  background: transparent; border: none; outline: none; 
+  color: var(--accent); width: 100px; font-family: 'Lato', sans-serif;
+}
+
+/* =========================================
+   4. INPUTS Y SELECCIÓN DE PERSONAJES
+   ========================================= */
+.dual-input-container {
+  display: flex; gap: 40px; align-items: stretch; padding-top: 10px;
+}
+
+.input-column { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+
+.column-label {
+  font-family: 'Cinzel', serif; font-size: 0.9rem; color: var(--text-secondary); 
+  letter-spacing: 1px; text-align: center; margin-bottom: 5px;
+  position: relative;
+}
+.column-label::before, .column-label::after {
+  content: ""; position: absolute; top: 50%; width: 30px; height: 1px; background: var(--border);
+}
+.column-label::before { left: 20%; }
+.column-label::after { right: 20%; }
+
+/* Perfil con imagen lateral */
+.profile-row { display: flex; gap: 20px; height: 100%; }
+.profile-left { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+
+.personas-grid { display: flex; gap: 10px; justify-content: center; }
+
+.persona-mini-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--bg-input);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; 
+  color: var(--text-secondary); transition: all 0.3s ease;
+}
+
+.persona-mini-btn:hover {
+  border-color: var(--p-color); color: var(--p-color);
+  transform: scale(1.1); box-shadow: 0 0 10px var(--p-color);
+}
+
+.persona-mini-btn.active { 
+  background: var(--p-color); color: white; border-color: var(--p-color); 
+  box-shadow: 0 0 15px var(--p-color);
+}
+
+.profile-right { width: 140px; flex-shrink: 0; }
+.persona-big-image {
+  width: 100%; height: 100%; object-fit: cover; 
+  border: 1px solid var(--border); 
+  transition: all 0.5s ease;
+}
+.persona-big-image:hover { border-color: var(--accent); }
+
+/* Textareas y botones de acción */
+.input-wrapper { position: relative; flex: 1; display: flex; }
+.full-height { height: 100%; }
+
+.input-area {
+  width: 100%; padding: 15px; padding-right: 60px;
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: 2px;
+  color: var(--text-primary); font-family: 'Lato', sans-serif; font-size: 0.95rem; line-height: 1.6;
+  resize: none; min-height: 100px; transition: all 0.3s;
+}
+.input-area:focus { 
+  outline: none; border-color: var(--accent); 
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+}
+.input-area::placeholder { color: #555; font-style: italic; }
+
+.action-btn {
+  position: absolute; bottom: 15px; right: 15px;
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
+  background: black; color: var(--text-secondary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+}
+.action-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.action-btn.primary { background: var(--accent); color: black; border: none; }
+.action-btn.primary:hover { background: #b5962f; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+.action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.vertical-divider { width: 1px; background: var(--border); position: relative; display: flex; align-items: center; justify-content: center; }
+.vertical-divider span { background: var(--bg-card); color: var(--text-secondary); font-family: 'Cinzel', serif; padding: 5px 0; z-index: 2; }
+
+/* =========================================
+   5. CONTENIDO PRINCIPAL (SIDEBAR + MAPA)
+   ========================================= */
+.main-grid { display: grid; grid-template-columns: 400px 1fr; gap: 25px; flex: 1; min-height: 0; }
+
+/* Sidebar de Resultados */
+.sidebar-card { 
+  background: rgba(18, 18, 18, 0.9); 
+  border: 1px solid var(--border); 
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+.results-list { display: flex; flex-direction: column; height: 100%; }
+.list-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.list-header h3 { margin: 0; font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--text-primary); }
+.counter { font-family: 'Lato', sans-serif; font-size: 0.8rem; color: var(--text-secondary); }
+
+.cards-scroller { padding: 15px; overflow-y: auto; flex: 1; }
+.cards-scroller::-webkit-scrollbar { width: 6px; }
+.cards-scroller::-webkit-scrollbar-thumb { background: #333; }
+
+.zone-card { 
+  background: var(--bg-input); border: 1px solid var(--border); padding: 15px; margin-bottom: 15px; 
+  cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+}
+.zone-card:hover { border-color: var(--text-secondary); transform: translateY(-2px); }
+.zone-card::before { /* Línea dorada sutil al hover */
+  content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: var(--accent); 
+  opacity: 0; transition: opacity 0.3s;
+}
+.zone-card:hover::before { opacity: 1; }
+
+.zone-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.zone-card-header strong { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--text-primary); }
+.match-percent { color: var(--accent); font-weight: bold; font-family: 'Lato', sans-serif; font-size: 0.85rem; }
+.zone-card p { margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* Detalle de Barrio Seleccionado */
+.detail-view { padding: 25px; overflow-y: auto; height: 100%; background: #121212; }
+.zone-header h2 { margin: 0 0 5px 0; font-family: 'Cinzel', serif; font-size: 1.6rem; letter-spacing: 1px; }
+.score-badge { display: inline-block; border: 1px solid; padding: 4px 10px; font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+.zone-desc { color: var(--text-primary); line-height: 1.7; font-size: 1rem; margin-bottom: 30px; }
+
+.chart-container {
+  height: 250px; width: 100%; margin-bottom: 30px; position: relative;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.recharts-text { fill: #a0a0a0 !important; font-family: 'Cinzel', serif; font-size: 11px; }
+
+.pois-list { border-top: 1px solid var(--border); padding-top: 20px; }
+.pois-list h4 { margin: 0 0 15px 0; font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
+.poi-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; padding: 8px; background: var(--bg-input); border: 1px solid var(--border); }
+.poi-item span:last-child { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Estado vacío y Spinner */
+.empty-state { text-align: center; padding: 60px 20px; color: #555; font-family: 'Cinzel', serif; }
+.empty-icon { font-size: 3rem; margin-bottom: 20px; opacity: 0.3; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--accent); animation: spin 1s linear infinite; }
+.animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+   6. MAPA Y MARCADORES
+   ========================================= */
+.map-card { 
+  border: 1px solid var(--border); 
+  filter: saturate(80%) contrast(110%); /* Filtro para look serio */
+}
+.leaflet-container { background: #1a1a1a !important; }
+
+/* Custom Markers (Burbujas grandes) */
+.custom-marker-container {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #000; 
+  border-width: 2px; border-style: solid; /* Color dinámico inline */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5); overflow: hidden; position: relative; transition: transform 0.3s;
+}
+.custom-marker-container:hover { transform: scale(1.3); z-index: 9999; border-color: white !important; }
+.marker-img { width: 100%; height: 100%; object-fit: cover; }
+.custom-marker-arrow {
+  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
+  width: 12px; height: 12px; background: #000 !important; 
+  border-bottom-width: 2px; border-bottom-style: solid;
+  border-right-width: 2px; border-right-style: solid;
+  z-index: -1;
+}
+
+/* Etiquetas de Texto en el Mapa (Labels) */
+.zone-label {
+  background: transparent; border: none; box-shadow: none;
+}
+.zone-label-text {
+  color: #e0e0e0; 
+  font-family: 'Cinzel', serif;
+  font-size: 30px; 
+  font-weight: 700;
+  text-transform: uppercase;
+  /* Sombra fuerte para legibilidad sobre el mapa */
+  text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  letter-spacing: 2px;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.5; /* Semitransparente */
+  
+  /* Centrado absoluto sobre el punto */
+  transform: translateX(-50%);
+  position: absolute; 
+  left: 0; 
+}
+
+/* =========================================
+   7. CONTROLES FLOTANTES (BOTONES Y FILTROS)
+   ========================================= */
+.map-controls-overlay {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  width: 90%; background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px);
+  padding: 12px 24px; border-radius: 12px; border: 1px solid var(--border);
+  z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+}
+
+/* Grupo de botones de navegación */
+.nav-buttons-group {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+
+/* Botones Anterior / Siguiente (Adaptables con texto) */
+.map-nav-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 0 16px; /* Padding lateral para que el texto quepa bien */
+  height: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px;
+  white-space: nowrap; /* Evita saltos de línea */
+  transition: all 0.3s ease;
+}
+.map-nav-btn:hover {
+  border-color: var(--accent); color: var(--accent);
+  background: rgba(255, 255, 255, 0.05); transform: translateY(-1px);
+}
+
+/* Botón Volver a Lista */
+.map-back-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Cinzel', serif; font-size: 0.85rem; white-space: nowrap;
+  transition: all 0.3s ease;
+}
+.map-back-btn:hover {
+  border-color: var(--accent); color: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Filtros (Checkboxes) */
+.map-filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.filters-label { color: var(--text-secondary); font-size: 0.8rem; display: flex; align-items: center; gap: 5px; text-transform: uppercase; }
+.filter-checkbox { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: opacity 0.3s; }
+.filter-checkbox:hover { opacity: 0.8; }
+.filter-checkbox input { accent-color: var(--accent); cursor: pointer; width: 16px; height: 16px; }
